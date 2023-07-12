@@ -1,0 +1,199 @@
+Functions
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+CryptAcquireContextW 
+
+This function is called as follows:
+
+CryptAcquireContextW( &m_hCryptProv,
+ pCertKeyContext->pwszContainterName,
+ pCertKeyContext->pwszProvName,
+ pCertKeyContext->dwProvType,
+ 0 );
+
+CryptAcquireContextW is used to obtain a handle to the CSP-associated key 
+container (which in turn is associate with a certificate in the personal 
+certificate store).
+pCertKeyContext was obtained using a call to 
+CertGetCertificateContextProperty, as follows:
+
+CertGetCertificateContextProperty(TheCert,
+ CERT_KEY_PROV_INFO_PROP_ID,
+ buffer,
+ &CertKeyContextSize);
+
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+CryptAcquireContextA 
+
+This function is called as follows:
+
+CryptAcquireContextA( &m_hCryptProv,
+ ContainerNameBuf,
+ ProvNameBuf,
+ pCertKeyContext->dwProvType,
+ 0 );
+
+CryptAcquireContextA will be called only if the call to 
+CryptAcquireContextW returned the value ERROR_CALL_NOT_IMPLEMENTED.
+ContainerNameBuf & ProvNameBuf were obtained from 
+pCertKeyContext->pwszContainerName & pCertKeyContext->pwszProvName 
+by sprintf() with %S and a NULL at the end.
+
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+CryptReleaseContext 
+
+This function is called as follows:
+
+CryptReleaseContext( m_hCryptProv, 0 );
+
+m_hCryptProv was obtained using a call to CryptAcquireContextW.
+
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+CryptGetProvParam
+
+This function is called as follows:
+
+CryptGetProvParam( m_hCryptProv, 
+ PP_IMPTYPE,
+ pbData,
+ &cbData,
+ 0);
+
+hHASH was obtained through a call to CryptCreateHash.
+
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+CryptCreateHash 
+
+This function is called as follows:
+
+CryptGetHashParam( hHash, 
+ HP_HASHSIZE (BYTE *) &HashAlgLen, 
+ &HashAlgLenSize, 
+ 0 );
+
+hHASH was obtained through a call to CryptCreateHash.
+
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+CryptGetHashParam 
+
+This function is called as follows:
+
+CryptGetHashParam( hHash, 
+ HP_HASHSIZE (BYTE *) &HashAlgLen, 
+ &HashAlgLenSize, 
+ 0 );
+
+hHASH was obtained through a call to CryptCreateHash.
+
+
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+CryptSetHashParam 
+
+This function is called as follows:
+
+CryptSetHashParam( hHash, HP_HASHVAL, pHashValue, 0);
+
+hHASH was obtained through a call to CryptCreateHash.
+pHashValue is a Byte array containing a hash value to be placed directly into 
+the hash object
+
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+CryptSignHash 
+
+This function is called as follows:
+
+CryptSignHash( hHash, 
+ AT_SIGNATURE,
+ NULL,
+ dwSigFlags,
+ pbSignature,
+ pdwSigLen,
+ 0);
+
+hHASH was obtained through a call to CryptCreateHash.
+The first call is with AT_SIGNATURE, if this call fails, SecuRemote tries again with 
+AT_KEYEXCHANGE.
+On Windows 2000 and later, dwSigFlags can be CRYPT_NOHASHOID or 0. In 
+case this call fails, SecuRemte tries again with 0. On older operating systems, 
+dwSigFlags is 0.
+pbSignature is a pointer to the buffer receiving the signature data.
+pdwSigLen is a pointer to a DWORD that specifies the size, in bytes, of the 
+pbSignature buffer
+
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+CryptDestroyHash 
+
+This function is called as follows:
+
+CryptDestroyHash( hHash );
+
+hHASH was obtained through a call to CryptCreateHash.
+
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+CryptExportPublicKeyInfoEx
+
+his function is called as follows:
+
+CryptExportPublicKeyInfoEx ( m_hCryptProv, AT_SIGNATURE, 
+X509_ASN_ENCODING, szOID_RSA_RSA, 
+0, NULL, pkinfo, &cbInfo)
+
+m_hCryptProv was obtained using a call to CryptAcquireContext.
+pkinfo is a pointer to a PCERT_PUBLIC_KEY_INFO structure to receive the public 
+key information to be exported.
+CbInfo is a pointer to a DWORD that contains the size, in bytes, of pkinfo.
+
+
+
+
+
+
